@@ -134,5 +134,5 @@ def pdf_parse_main(
 
 # 测试
 if __name__ == '__main__':
-    pdf_path = r"C:\Users\yongjie.yang\Desktop\一张图片价值170个Token：GPT-4是如何编码图像的？.pdf"
+    pdf_path = r"C:\Users\yongjie.yang\Desktop\agent综述）理解llm agent的规划：综述\agent综述）理解llm agent的规划：综述.pdf"
     pdf_parse_main(pdf_path)

@@ -47,7 +47,8 @@ class MarkdownMapper:
                 re.MULTILINE),  # 表格
             "F": re.compile(r'(?<!<PH>)\$.*?\$(?!<\/PH>)', re.DOTALL),  # 公式
             "IC": re.compile(r'(?<!<PH>)`.*?`(?!<\/PH>)'),  # 行内代码
-            "I": re.compile(r'(?<!<PH>)!\[.*?\]\([^\)]+\)(?!<\/PH>)')  # 图片
+            "I": re.compile(r'(?<!<PH>)!\[.*?\]\([^\)]+\)(?!<\/PH>)'),  # 图片
+            "URL": re.compile(r'(?<!<PH>)\[(.*?)\]\((http[s]?://[^\)]+)\)(?!<\/PH>)')  # 网址
         }
 
     def _generate_placeholder(self, content_type):
@@ -176,7 +177,7 @@ class MarkdownMapper:
 
     def restore_text(self, translated_text):
         """
-        将替换后的文本恢复为包含原始内容的文本。
+        将替换后的文本恢复为包含原始内容的文本，并根据需要在<PH>标签前后添加换行符。
 
         Parameters:
         - translated_text (str): 翻译后的Markdown文本，包含占位符。
@@ -185,11 +186,30 @@ class MarkdownMapper:
         - str: 恢复后的Markdown文本，已将占位符替换为原始内容。
         """
         restored_text = translated_text
+
         # 先按照占位符替换为原始内容
         for placeholder, original_content in self.mapping.items():
+            placeholder_with_tags = f"<PH>{placeholder}</PH>"
+
+            # 查找带有<PH>标签的占位符位置
+            index = restored_text.find(placeholder_with_tags)
+
+            if index != -1 and (placeholder.startswith("C_") or placeholder.startswith("T_")):
+                # 判断<PH>标签前面是否有换行符
+                if index > 0 and restored_text[index - 1] != '\n':
+                    original_content = f"\n{original_content}"
+
+                # 判断</PH>标签后面是否有换行符
+                end_index = index + len(placeholder_with_tags)
+                if end_index < len(restored_text) and restored_text[end_index] != '\n':
+                    original_content = f"{original_content}\n"
+
+            # 替换占位符为原始内容
             restored_text = restored_text.replace(placeholder, original_content)
+
         # 再去除<PH>和</PH>标签
         restored_text = restored_text.replace("<PH>", "").replace("</PH>", "")
+
         return restored_text
 
     def prepare_markdown_for_translation(self, markdown_input):

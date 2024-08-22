@@ -33,7 +33,7 @@ def encode_image(image_path):
 
 
 def client_qwen(system_message: str, user_message: str, model: str = "qwen2-72b-instruct",
-                max_tokens: int = 4096, temperature: int = 0, result_format: str = "text",
+                max_tokens: int = 4096, temperature: float = 0.1, result_format: str = "text",
                 image_paths: list = None, api_key: str = None, base_url: str = None):
     """
     发送请求到 DashScope。
@@ -66,6 +66,7 @@ def client_qwen(system_message: str, user_message: str, model: str = "qwen2-72b-
                 {'role': 'user', 'content': user_message}]
             response = dashscope.Generation.call(
                 model=model,
+                temperature=temperature,
                 messages=messages,
                 result_format=result_format
             )
@@ -149,4 +150,3 @@ def client_qianfan(
             {"role": "user", "content": prompt}
         ])
     return resp["body"]['result']
-

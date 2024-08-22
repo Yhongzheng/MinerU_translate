@@ -97,7 +97,7 @@ def save_markdown_as_pdf(markdown_text, pdf_file_path):
 
 if __name__ == '__main__':
     file_paths = [
-        r"C:\Users\yongjie.yang\Desktop\1\A Picture is Worth 170 Tokens How Does GPT-4o Encode Images.md"
+        r"C:\Users\yongjie.yang\Desktop\What Is DSPy How It Works\What Is DSPy How It Works.md"
         ,
     ]
     for path in file_paths:

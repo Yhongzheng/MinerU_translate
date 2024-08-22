@@ -1411,3 +1411,32 @@ KeyboardInterrupt
 2024-08-21 12:01:17,720 - ERROR - Error processing file C:\Users\yongjie.yang\Desktop\一张图片价值170个Token：GPT-4是如何编码图像的？\一张图片价值170个Token：GPT-4是如何编码图像的？.md: TTF Font file not found: path_to_your_Arial_Unicode_MS.ttf
 2024-08-21 14:19:38,590 - ERROR - Error processing file C:\Users\yongjie.yang\Desktop\1\A Picture is Worth 170 Tokens How Does GPT-4o Encode Images.md: TTF Font file not found: path_to_your_Arial_Unicode_MS.ttf
 2024-08-21 14:27:21,155 - ERROR - Error processing file C:\Users\yongjie.yang\Desktop\1\A Picture is Worth 170 Tokens How Does GPT-4o Encode Images.md: TTF Font file not found: path_to_your_Arial_Unicode_MS.ttf
+2024-08-21 16:45:30,596 - ERROR - Error ID: fb3f6768-eb9c-410b-9220-f7061086190a - Error: Unexpected response format.
+2024-08-21 16:45:58,494 - ERROR - Error ID: 9a193219-bdfc-4282-8ee4-09bd2569c344 - Error: client_qwen returned None
+2024-08-21 16:48:34,471 - ERROR - Error ID: 48414121-58d5-4c69-addf-878491a4e970 - Error: Unexpected response format.
+2024-08-21 16:48:35,768 - ERROR - Error ID: b567325c-4969-4f92-a318-1a15da308db8 - Error: client_qwen returned None
+2024-08-21 16:49:25,292 - ERROR - Error ID: 2417a239-5576-4f0d-9904-5f6f8d3fbd28 - Error: Unexpected response format.
+2024-08-21 16:52:20,446 - ERROR - Error ID: b07ea973-f36d-40a9-b3d4-237460c725ce - Error: Unexpected response format.
+2024-08-21 16:53:22,874 - ERROR - Error ID: 5777bd92-066e-412a-a944-d19e82cbfa13 - Error: Unexpected response format.
+2024-08-21 16:54:24,213 - ERROR - Error ID: 17af08d6-d47b-4caa-a06c-be64c912a5b0 - Error: Unexpected response format.
+2024-08-21 16:54:53,789 - ERROR - Error ID: 9146663e-d744-40fc-aca2-bb6418959d83 - Error: Unexpected response format.
+2024-08-21 16:55:21,946 - ERROR - Error ID: e86ab45b-7914-4b3e-bd33-8378c2b098a1 - Error: Unexpected response format.
+2024-08-21 16:55:49,039 - ERROR - Error ID: 9c41d910-d59f-4f73-8a56-f71d58abcf8c - Error: Unexpected response format.
+2024-08-21 16:56:18,759 - ERROR - Error ID: 1b439feb-f6be-4666-a8ef-73ced760e75a - Error: Unexpected response format.
+2024-08-21 16:56:24,042 - ERROR - Error processing file C:\Users\yongjie.yang\Desktop\1\A Picture is Worth 170 Tokens How Does GPT-4o Encode Images.md: TTF Font file not found: path_to_your_Arial_Unicode_MS.ttf
+2024-08-22 15:54:19,061 - ERROR - Error ID: 7beb6fd8-669e-482d-a48f-58f3199f5a34 - Error: client_qwen returned None
+2024-08-22 15:54:19,067 - ERROR - Error ID: b94d097a-8d24-4717-a427-c09b0d068dd2 - Error: client_qwen returned None
+2024-08-22 15:54:19,067 - ERROR - Error ID: 6d68ee15-8c31-4651-8c93-f94e9358e896 - Error: client_qwen returned None
+2024-08-22 15:55:01,651 - ERROR - Error ID: 7cceedcb-1601-45d5-b85f-dead106f33bd - Error: Unexpected response format.
+2024-08-22 15:57:24,220 - ERROR - Error ID: 3e8f0b94-766c-4065-863b-0d6db38a6a18 - Error: client_qwen returned None
+2024-08-22 15:57:24,242 - ERROR - Error ID: 11617580-9cb8-46ef-8885-60fdfb37c4cd - Error: client_qwen returned None
+2024-08-22 15:57:36,698 - ERROR - Error ID: 18bb81c9-20e0-4695-b206-786efa69978d - Error: Unexpected response format.
+2024-08-22 16:00:29,394 - ERROR - Error ID: 6051232b-18c5-4692-9983-54420af3acd7 - Error: client_qwen returned None
+2024-08-22 16:00:29,413 - ERROR - Error ID: e1d5a164-8925-4715-aab9-8ea7c52aa505 - Error: client_qwen returned None
+2024-08-22 16:16:30,309 - ERROR - Error ID: 2886cf99-8b36-4f25-b1fc-3b31b17fbdd1 - Error: client_qwen returned None
+2024-08-22 16:16:30,317 - ERROR - Error ID: 57c4947e-1918-4be5-9b18-eabffa6ab9ef - Error: client_qwen returned None
+2024-08-22 16:16:56,022 - ERROR - Error ID: 38de4fe1-0bfc-4f43-b56f-e738298962e8 - Error: client_qwen returned None
+2024-08-22 16:17:03,818 - ERROR - Error ID: 59bd90b3-5cc8-432b-93e9-34e8c32096ff - Error: client_qwen returned None
+2024-08-22 16:17:09,243 - ERROR - Error ID: bee90c71-7203-413a-9a48-6d2fe85a38b1 - Error: client_qwen returned None
+2024-08-22 16:23:39,477 - ERROR - Error processing file C:\Users\yongjie.yang\Desktop\What Is DSPy How It Works\What Is DSPy How It Works.md: TTF Font file not found: path_to_your_Arial_Unicode_MS.ttf
+2024-08-22 17:06:48,167 - ERROR - Error processing file C:\Users\yongjie.yang\Desktop\What Is DSPy How It Works\What Is DSPy How It Works.md: TTF Font file not found: path_to_your_Arial_Unicode_MS.ttf
