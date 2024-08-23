@@ -45,6 +45,7 @@ class MarkdownMapper:
             "T": re.compile(
                 r'(?<!<PH>)^\|(?:[^\n]+\|)+\n\|\s*[:-]+\s*\|(?:\s*[:-]+\s*\|)*\n(?:\|(?:[^\n]+\|)+\n)*(?!<\/PH>)',
                 re.MULTILINE),  # 表格
+            "MF": re.compile(r'(?<!<PH>)\$\$.*?\$\$(?!<\/PH>)', re.DOTALL),  # 多行公式
             "F": re.compile(r'(?<!<PH>)\$.*?\$(?!<\/PH>)', re.DOTALL),  # 公式
             "IC": re.compile(r'(?<!<PH>)`.*?`(?!<\/PH>)'),  # 行内代码
             "I": re.compile(r'(?<!<PH>)!\[.*?\]\([^\)]+\)(?!<\/PH>)'),  # 图片

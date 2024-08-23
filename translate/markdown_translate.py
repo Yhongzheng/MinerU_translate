@@ -32,6 +32,20 @@ def log_error_as_json(unique_id, prompt, system_message, result_format, error):
         f.write('\n')  # 确保每条日志占一行
 
 
+def log_detailed_error(unique_id, prompt, system_message, result_format, error, retries):
+    error_data = {
+        "Error ID": unique_id,
+        "Prompt": prompt,
+        "System message": system_message,
+        "Result format": result_format,
+        "Error": str(error),
+        "Retries": retries
+    }
+    with open('detailed_error_log.json', 'a') as f:
+        json.dump(error_data, f, ensure_ascii=False, indent=4)
+        f.write('\n')  # 分隔不同的错误日志
+
+
 # 定义一个异步函数，用于与大型语言模型进行交互，获取文本的处理结果
 async def get_completion(prompt: str, system_message: str = "You are a helpful assistant.",
                          model: str = "qwen2-72b-instruct", result_format: str = 'message',
@@ -272,6 +286,7 @@ async def run_with_semaphore(semaphore, coro):
 
 
 # 定义一个异步函数，用于翻译Markdown文本
+# 定义一个异步函数，用于翻译Markdown文本
 async def translate_markdown(
         source_lang: str,
         target_lang: str,
@@ -284,7 +299,9 @@ async def translate_markdown(
     num_tokens_in_text = num_tokens_in_string(source_text)  # 计算文本中的标记数量
     ic(num_tokens_in_text)
 
-    async def process_chunk(chunk):
+    failed_chunks = []
+
+    async def process_chunk(chunk, index, retries=0) -> str:
         try:
             initial_translation = await run_with_semaphore(
                 semaphore, one_chunk_translation(source_lang, target_lang, country, chunk)
@@ -295,14 +312,29 @@ async def translate_markdown(
             )
             return improved_translation
         except Exception as e:
-            logging.error(f"Error processing chunk: {e}")
-            return chunk  # 返回原始文本，如果翻译失败
+            if retries >= 5:
+                unique_id = str(uuid.uuid4())
+                log_detailed_error(unique_id, chunk, "", "", e, retries)
+                failed_chunks.append((index, chunk))  # 保留失败的块及其索引
+                return f"\n\n未成功获取LLM结果 - 错误ID: {unique_id}\n\n"
+            else:
+                return await process_chunk(chunk, index, retries + 1)
 
     if num_tokens_in_text < max_tokens:
         ic("Translating text as single chunk")
-        return await process_chunk(source_text)
+        return await process_chunk(source_text, 0)
     else:
         ic("Translating text as multiple chunks")
         source_text_chunks = split_text(source_text, max_tokens)
-        translated_chunks = await asyncio.gather(*[process_chunk(chunk) for chunk in source_text_chunks])
+        translated_chunks: List[str] = list(
+            await asyncio.gather(*[process_chunk(chunk, index) for index, chunk in enumerate(source_text_chunks)]))
+
+        # 如果有失败的块，再次尝试处理
+        if failed_chunks:
+            ic("Retrying failed chunks")
+            retry_results = await asyncio.gather(*[process_chunk(chunk, index) for index, chunk in failed_chunks])
+
+            for (index, _), retry_result in zip(failed_chunks, retry_results):
+                translated_chunks[index] = retry_result  # 放回原来的位置
+
         return "\n\n".join(translated_chunks)
