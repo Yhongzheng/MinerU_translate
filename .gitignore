@@ -38,4 +38,7 @@ ocr_demo
 source.dev.env
 
 translate/API_KEYS.json
+translate/detailed_error_log.json
+translate/error_log.json
+translate/error_log.txt
 
