@@ -284,44 +284,25 @@ async def translate_markdown(
     num_tokens_in_text = num_tokens_in_string(source_text)  # 计算文本中的标记数量
     ic(num_tokens_in_text)
 
+    async def process_chunk(chunk):
+        try:
+            initial_translation = await run_with_semaphore(
+                semaphore, one_chunk_translation(source_lang, target_lang, country, chunk)
+            )
+            improved_translation = await run_with_semaphore(
+                semaphore,
+                one_chunk_improve_translation(source_lang, target_lang, country, chunk, initial_translation)
+            )
+            return improved_translation
+        except Exception as e:
+            logging.error(f"Error processing chunk: {e}")
+            return chunk  # 返回原始文本，如果翻译失败
+
     if num_tokens_in_text < max_tokens:
         ic("Translating text as single chunk")
-
-        # 第一次处理 - 翻译原文
-        initial_translation = await run_with_semaphore(
-            semaphore, one_chunk_translation(source_lang, target_lang, country, source_text)
-        )
-
-        # 第二次处理 - 改进翻译
-        improved_translation = await run_with_semaphore(
-            semaphore,
-            one_chunk_improve_translation(source_lang, target_lang, source_text, country, initial_translation)
-        )
-
-        return improved_translation  # 返回改进后的翻译文本
-
+        return await process_chunk(source_text)
     else:
         ic("Translating text as multiple chunks")
-
-        source_text_chunks = split_text(source_text, max_tokens)  # 将文本拆分为多个块
-
-        # 并发执行第一次翻译任务
-        translation_tasks = [
-            run_with_semaphore(semaphore, one_chunk_translation(source_lang, target_lang, country, chunk))
-            for chunk in source_text_chunks
-        ]
-        translations = await asyncio.gather(*translation_tasks)  # 等待所有翻译任务完成
-
-        # 并发执行第二次改进翻译任务
-        improvement_tasks = [
-            run_with_semaphore(semaphore,
-                               one_chunk_improve_translation(source_lang, target_lang, country, chunk, translated))
-            for chunk, translated in zip(source_text_chunks, translations)
-        ]
-        improved_translations = await asyncio.gather(*improvement_tasks)  # 等待所有改进任务完成
-
-        # 处理 None 的情况，确保所有元素都是字符串
-        improved_translations = [translation if translation is not None else "" for translation in
-                                 improved_translations]
-
-        return "\n\n".join(improved_translations)  # 将所有改进后的翻译文本块合并为一个字符串
+        source_text_chunks = split_text(source_text, max_tokens)
+        translated_chunks = await asyncio.gather(*[process_chunk(chunk) for chunk in source_text_chunks])
+        return "\n\n".join(translated_chunks)

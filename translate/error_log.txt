@@ -1440,3 +1440,31 @@ KeyboardInterrupt
 2024-08-22 16:17:09,243 - ERROR - Error ID: bee90c71-7203-413a-9a48-6d2fe85a38b1 - Error: client_qwen returned None
 2024-08-22 16:23:39,477 - ERROR - Error processing file C:\Users\yongjie.yang\Desktop\What Is DSPy How It Works\What Is DSPy How It Works.md: TTF Font file not found: path_to_your_Arial_Unicode_MS.ttf
 2024-08-22 17:06:48,167 - ERROR - Error processing file C:\Users\yongjie.yang\Desktop\What Is DSPy How It Works\What Is DSPy How It Works.md: TTF Font file not found: path_to_your_Arial_Unicode_MS.ttf
+2024-08-22 17:28:40,852 - ERROR - Error ID: 5c07a19b-ff46-4c35-9d37-ccdc3ab1c2e2 - Error: Unexpected response format.
+2024-08-22 17:29:18,843 - ERROR - Error ID: 3845c8dd-ea54-4db1-a5eb-3525f9196275 - Error: Unexpected response format.
+2024-08-22 17:29:55,614 - ERROR - Error ID: 2bcfe11f-6dca-4df4-836e-0f67b95e3baa - Error: Unexpected response format.
+2024-08-22 17:30:24,862 - ERROR - Error ID: 671a0aa5-34c2-44ba-9266-bc0123266c92 - Error: Unexpected response format.
+2024-08-22 17:30:55,716 - ERROR - Error ID: a699e272-133c-481d-90cd-a27657afddd4 - Error: Unexpected response format.
+2024-08-22 17:31:10,887 - ERROR - Error processing file C:\Users\yongjie.yang\Desktop\agent综述）理解llm agent的规划：综述\agent综述）理解llm agent的规划：综述\agent综述）理解llm agent的规划：综述.md: 'gbk' codec can't encode character '\xb4' in position 477: illegal multibyte sequence
+2024-08-22 17:51:39,782 - ERROR - Error ID: f9f35ad8-fbdc-4b80-9137-721ed7359183 - Error: Unexpected response format.
+2024-08-22 17:52:11,060 - ERROR - Error ID: ec1a12d3-fe35-4fe2-9063-2fa92ac9f62c - Error: Unexpected response format.
+2024-08-22 17:52:40,344 - ERROR - Error ID: 95a31932-ab71-4caf-87bb-f2e1d44a7c5c - Error: Unexpected response format.
+2024-08-22 17:53:15,108 - ERROR - Error ID: dc35c7e1-225e-4760-8b27-689a8777844c - Error: Unexpected response format.
+2024-08-22 17:53:47,625 - ERROR - Error ID: bfbe89b1-12eb-4a87-8a9a-db0fe5881091 - Error: Unexpected response format.
+2024-08-22 17:53:51,296 - ERROR - Error ID: 386a3f31-b0b4-4dd2-97fd-552f8c6ad9b1 - Error: Unexpected response format.
+2024-08-22 17:53:58,092 - ERROR - Error processing file C:\Users\yongjie.yang\Desktop\agent综述）理解llm agent的规划：综述\agent综述）理解llm agent的规划：综述\agent综述）理解llm agent的规划：综述.md: 'gbk' codec can't encode character '\xb4' in position 477: illegal multibyte sequence
+2024-08-23 09:50:22,015 - ERROR - Error ID: 7a9249ca-da02-474c-ad58-390097108196 - Error: Unexpected response format.
+2024-08-23 09:50:45,284 - ERROR - Error ID: e35b195d-2245-48e2-89fa-697c4b6c7eb8 - Error: Unexpected response format.
+2024-08-23 09:51:07,056 - ERROR - Error ID: 3e3e68fe-5658-453e-992f-c755934ec0e8 - Error: Unexpected response format.
+2024-08-23 09:51:35,568 - ERROR - Error ID: a61e31a9-f9b0-479a-aae1-a85df918131d - Error: Unexpected response format.
+2024-08-23 09:52:04,907 - ERROR - Error ID: 98de06fe-afe5-42fc-9deb-94c3b807984d - Error: Unexpected response format.
+2024-08-23 09:52:17,299 - ERROR - Error ID: 5d88d9db-06b6-4f1c-b2c1-81d672b67076 - Error: Unexpected response format.
+2024-08-23 09:52:28,613 - ERROR - Error processing chunk: 'gbk' codec can't encode character '\xb4' in position 477: illegal multibyte sequence
+2024-08-23 09:52:42,828 - ERROR - Error ID: 4e400c20-7383-4c1d-a11e-4b3cdee40931 - Error: Unexpected response format.
+2024-08-23 09:53:02,120 - ERROR - Error ID: d7edcda7-29c0-4389-b950-899b3db9b58d - Error: Unexpected response format.
+2024-08-23 09:53:08,806 - ERROR - Error ID: 1f6c0a71-35c7-43b4-a3ee-2f4790d36b17 - Error: Unexpected response format.
+2024-08-23 09:53:33,221 - ERROR - Error ID: f58ea84e-424d-47b3-b638-f2e3772fd0c1 - Error: Unexpected response format.
+2024-08-23 09:53:59,577 - ERROR - Error ID: c2ea5ed2-cf9a-4810-8c23-cd3322f61acd - Error: Unexpected response format.
+2024-08-23 09:54:23,573 - ERROR - Error ID: 5a403b00-90ee-40b7-806a-912cf04100db - Error: Unexpected response format.
+2024-08-23 09:55:00,464 - ERROR - Error ID: f5341cb0-b77d-4bc1-90ba-ff6a103d99d4 - Error: Unexpected response format.
+2024-08-23 09:56:03,084 - ERROR - Error processing file C:\Users\yongjie.yang\Desktop\agent综述）理解llm agent的规划：综述\agent综述）理解llm agent的规划：综述\agent综述）理解llm agent的规划：综述.md: TTF Font file not found: path_to_your_Arial_Unicode_MS.ttf
