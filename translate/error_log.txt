@@ -1468,3 +1468,21 @@ KeyboardInterrupt
 2024-08-23 09:54:23,573 - ERROR - Error ID: 5a403b00-90ee-40b7-806a-912cf04100db - Error: Unexpected response format.
 2024-08-23 09:55:00,464 - ERROR - Error ID: f5341cb0-b77d-4bc1-90ba-ff6a103d99d4 - Error: Unexpected response format.
 2024-08-23 09:56:03,084 - ERROR - Error processing file C:\Users\yongjie.yang\Desktop\agent综述）理解llm agent的规划：综述\agent综述）理解llm agent的规划：综述\agent综述）理解llm agent的规划：综述.md: TTF Font file not found: path_to_your_Arial_Unicode_MS.ttf
+2024-08-23 14:58:26,734 - ERROR - Error ID: 9a086da2-d2f6-40f5-931c-48932069fcd1 - Error: Unexpected response format.
+2024-08-23 14:58:51,833 - ERROR - Error ID: b123b923-5865-49a0-953e-e253b17d17d3 - Error: Unexpected response format.
+2024-08-23 14:59:11,857 - ERROR - Error ID: 30f06e29-fbd7-4f4c-9e09-05a342095df3 - Error: Unexpected response format.
+2024-08-23 14:59:24,265 - ERROR - Error ID: 569057bf-eb73-49e1-b2ff-83f666e0c072 - Error: Unexpected response format.
+2024-08-23 14:59:44,729 - ERROR - Error ID: 167f7cec-1b31-48c1-82c0-b9713183a8b6 - Error: Unexpected response format.
+2024-08-23 15:00:03,192 - ERROR - Error ID: 4badf94f-fa8b-4069-9378-63c17ff42f31 - Error: Unexpected response format.
+2024-08-23 15:05:16,272 - ERROR - Error processing file C:\Users\yongjie.yang\Desktop\agent综述）理解llm agent的规划：综述\agent综述）理解llm agent的规划：综述\agent综述）理解llm agent的规划：综述.md: 'gbk' codec can't encode character '\xb4' in position 64: illegal multibyte sequence
+2024-08-23 15:17:15,992 - ERROR - Error processing file C:\Users\yongjie.yang\Desktop\11\agent综述.md: TTF Font file not found: path_to_your_Arial_Unicode_MS.ttf
+2024-08-23 15:32:13,013 - ERROR - Error processing file C:\Users\yongjie.yang\Desktop\11\agent综述.md: TTF Font file not found: simsun.pkl
+2024-08-23 15:37:41,653 - ERROR - Error processing file C:\Users\yongjie.yang\Desktop\11\agent综述.md: TTF Font file not found: simsun.pkl
+2024-08-23 15:46:10,563 - ERROR - Error processing file C:\Users\yongjie.yang\Desktop\11\agent综述.md: ERROR - TrueType Fonts Collections not supported
+2024-08-23 15:57:28,578 - ERROR - Error ID: 95d1c325-2fdb-4dec-ba7f-469b6f12799d - Error: Unexpected response format.
+2024-08-23 16:03:23,441 - ERROR - Error processing file C:\Users\yongjie.yang\Desktop\agent综述\agent综述\agent综述.md: 'gbk' codec can't encode character '\xb4' in position 64: illegal multibyte sequence
+2024-08-23 16:17:27,127 - ERROR - Error ID: 2c9dd4d2-10c9-408b-bb50-2a169c9bcbae - Error: Unexpected response format.
+2024-08-23 16:17:59,785 - ERROR - Error ID: 24fc5284-cedf-4ea9-9361-8ccc06cca414 - Error: Unexpected response format.
+2024-08-23 16:18:34,213 - ERROR - Error ID: e20a7e79-3ef8-4163-b31c-9fb07416d09f - Error: Unexpected response format.
+2024-08-23 16:19:08,642 - ERROR - Error ID: 81f5e65c-7be0-402c-b82c-1d30510a3ad6 - Error: Unexpected response format.
+2024-08-23 16:19:55,056 - ERROR - Error ID: 7df1ab1c-6c30-4979-a34c-ce713f5d4b37 - Error: Unexpected response format.

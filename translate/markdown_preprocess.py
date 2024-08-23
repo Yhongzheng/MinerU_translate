@@ -6,7 +6,9 @@ import os
 import chardet
 import requests
 from icecream import ic
-from urllib.parse import unquote, quote
+from urllib.parse import unquote, quote, urlparse
+from pathlib import Path
+import traceback
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
@@ -87,24 +89,23 @@ class MarkdownMapper:
         # 获取原始内容
         original_content = match.group(0)
 
-        # 如果内容类型是图片
         if content_type == "I":
             try:
-                # 提取图片路径，处理URL编码的字符
+                # 提取图片路径
                 original_path = unquote(re.search(r'\((.*?)\)', original_content).group(1))
 
-                if original_path.startswith("http://") or original_path.startswith("https://"):
-                    # 如果是网络图片，直接保留原始链接，不进行下载
+                # 检查是否为URL
+                if urlparse(original_path).scheme in ('http', 'https'):
+                    # 如果是网络图片，直接保留原始链接
                     self.mapping[placeholder] = original_content
                 else:
                     # 处理本地图片路径
-                    if not os.path.isabs(original_path):
-                        original_path = os.path.join(self.image_dir, original_path)
-                    original_path = os.path.normpath(original_path)
-
-                    if os.path.exists(original_path):
+                    original_path = Path(self.image_dir) / original_path
+                    if original_path.exists():
+                        # 将图片复制到缓存目录
                         new_path = self._copy_image_to_cache(original_path)
-                        new_path = os.path.normpath(new_path).replace('\\', '/')
+                        # 将路径转换为URL格式，并统一使用正斜杠
+                        new_path = new_path.as_posix()
                         alt_text = re.search(r'\[(.*?)\]', original_content).group(1)
                         modified_content = f'![{alt_text}]({quote(new_path)})'
                         self.mapping[placeholder] = modified_content
@@ -112,8 +113,7 @@ class MarkdownMapper:
                         print(f"图片不存在：{original_path}")
                         self.mapping[placeholder] = original_content
             except Exception as e:
-                # 如果处理图片时出错，打印中文提示
-                print(f"处理图片时出错：{original_content}")
+                print(f"处理图片时出错：{traceback.format_exc()}")
                 print(f"异常信息：{e}")
                 self.mapping[placeholder] = original_content
         else:
@@ -127,26 +127,26 @@ class MarkdownMapper:
         """
         复制图片到目标目录中与源目录结构一致的路径，并返回相对于目标目录的相对路径。
 
-        Parameters:
-        - original_path (str): 原始图片路径。
+        参数:
+        - original_path (Path): 原始图片路径。
 
-        Returns:
+        返回:
         - str: 相对路径，用于替换Markdown中的图片链接。
         """
         # 获取图片在源文件夹中的相对路径
-        rel_path = os.path.relpath(original_path, self.image_dir)
+        rel_path = original_path.relative_to(self.image_dir)
         # 目标路径应该保持相同的文件结构
-        target_path = os.path.join(self.output_dir, rel_path)
-        target_dir = os.path.dirname(target_path)
+        target_path = Path(self.output_dir) / rel_path
+        target_dir = target_path.parent
 
         # 如果目标路径的目录不存在，则创建
-        os.makedirs(target_dir, exist_ok=True)
+        target_dir.mkdir(parents=True, exist_ok=True)
 
         # 复制图片到目标路径
         shutil.copy2(original_path, target_path)
 
         # 返回相对于output_dir的相对路径
-        return os.path.relpath(target_path, self.output_dir)
+        return target_path.relative_to(self.output_dir)
 
     def clear_image_cache(self):
         """
@@ -172,7 +172,7 @@ class MarkdownMapper:
                 replaced_text = pattern.sub(lambda match: self._replace_with_placeholder(match, content_type),
                                             replaced_text)
             except Exception as e:
-                print(f'在处理类型 {content_type} 时发生异常: {e}')
+                print(f'在处理类型 {content_type} 时发生异常: {traceback.format_exc()}')
                 raise
         return replaced_text
 

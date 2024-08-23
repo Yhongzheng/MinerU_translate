@@ -1,3 +1,5 @@
+import traceback
+
 from translate import MarkdownMapper, translate_markdown
 import chardet
 import os
@@ -70,19 +72,27 @@ async def process_markdown_file(file_path, source_lang, target_lang, country):
                 file.write(final_text)
             logging.info(f"Translation saved to: {translated_file_path}")
 
-            # 保存为PDF
-            pdf_file_path = os.path.join(output_dir, f"{base_name}_translated.pdf")
-            save_markdown_as_pdf(final_text, pdf_file_path)
-            logging.info(f"PDF saved to: {pdf_file_path}")
+            # # 保存为PDF
+            # pdf_file_path = os.path.join(output_dir, f"{base_name}_translated.pdf")
+            # save_markdown_as_pdf(final_text, pdf_file_path)
+            # logging.info(f"PDF saved to: {pdf_file_path}")
         else:
             logging.error(f"Translation failed for file {file_path}")
 
     except Exception as e:
-        logging.error(f"Error processing file {file_path}: {e}")
+        logging.error(f"Error processing file {file_path}: {traceback.format_exc()}")
         raise  # 重新抛出异常，以便主程序可以捕获它
 
 
 def save_markdown_as_pdf(markdown_text, pdf_file_path):
+    def get_system_font_path(font_name):
+        # 获取Windows字体目录
+        font_dir = os.path.join(os.environ['WINDIR'], 'Fonts')
+        for file_name in os.listdir(font_dir):
+            if file_name.lower().startswith(font_name.lower()):
+                return os.path.join(font_dir, file_name)
+        return None
+
     # 将Markdown内容转换为HTML
     html_text = markdown(markdown_text)
     # 创建PDF对象
@@ -90,18 +100,43 @@ def save_markdown_as_pdf(markdown_text, pdf_file_path):
     pdf.add_page()
     pdf.set_auto_page_break(auto=True, margin=15)
 
-    # 设置支持中文的字体，例如Arial Unicode MS或其他
-    pdf.add_font('ArialUnicode', '', 'path_to_your_Arial_Unicode_MS.ttf', uni=True)
-    pdf.set_font('ArialUnicode', size=12)
+    # 获取并添加宋体（SimSun）字体路径
+    simsun_path = get_system_font_path('simsun')
+    if simsun_path:
+        pdf.add_font('SimSun', '', simsun_path, uni=True)
+    else:
+        raise FileNotFoundError("SimSun font not found in the system fonts directory.")
 
-    # 将HTML内容添加到PDF中
-    pdf.multi_cell(0, 10, html_text)
+    # 获取并添加Times New Roman字体路径
+    times_path = get_system_font_path('times')
+    if times_path:
+        pdf.add_font('Times', '', times_path, uni=True)
+    else:
+        raise FileNotFoundError("Times New Roman font not found in the system fonts directory.")
+
+    # 初始字体设置为宋体，处理中文
+    pdf.set_font('SimSun', size=12)
+
+    # 分别处理中文和英文字符
+    def process_text(text):
+        result = []
+        for char in text:
+            if '\u4e00' <= char <= '\u9fff':
+                pdf.set_font('SimSun', size=12)
+            else:
+                pdf.set_font('Times', size=12)
+            result.append(char)
+        return ''.join(result)
+
+    # 将Markdown内容逐字处理并添加到PDF
+    processed_text = process_text(html_text)
+    pdf.multi_cell(0, 10, processed_text)
     pdf.output(pdf_file_path)
 
 
 if __name__ == '__main__':
     file_paths = [
-        r"C:\Users\yongjie.yang\Desktop\agent综述）理解llm agent的规划：综述\agent综述）理解llm agent的规划：综述\agent综述）理解llm agent的规划：综述.md"
+        r"C:\Users\yongjie.yang\Desktop\agent综述\agent综述\agent综述.md"
         ,
     ]
     for path in file_paths:
@@ -109,4 +144,4 @@ if __name__ == '__main__':
             asyncio.run(process_markdown_file(path, "英语", "汉语", "中国"))
             print(f"Processing completed for {path}")
         except Exception as e:
-            print(f"Error processing {path}: {e}")
+            print(f"Error processing {path}: {traceback.format_exc()}")

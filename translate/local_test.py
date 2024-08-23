@@ -134,5 +134,5 @@ def pdf_parse_main(
 
 # 测试
 if __name__ == '__main__':
-    pdf_path = r"C:\Users\yongjie.yang\Desktop\agent综述）理解llm agent的规划：综述\agent综述）理解llm agent的规划：综述.pdf"
+    pdf_path = r"C:\Users\yongjie.yang\Desktop\伊利亚文章\2. The First Law of Complexodynamics.pdf"
     pdf_parse_main(pdf_path)

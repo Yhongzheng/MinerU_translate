@@ -10,6 +10,7 @@ import functools
 import logging
 import uuid
 import json
+import traceback
 
 # 设置每个文本块的最大标记数量，如果文本超过这个标记数量，我们将把它分成多个块
 TOKENS_PER_CHUNK = 800
@@ -19,6 +20,16 @@ logging.basicConfig(filename='error_log.txt', level=logging.ERROR, format='%(asc
 
 
 def log_error_as_json(unique_id, prompt, system_message, result_format, error):
+    """
+    将错误信息保存为 JSON 格式的日志。
+
+    参数:
+        unique_id (str): 错误的唯一ID。
+        prompt (str): 提示词的内容。
+        system_message (str): 系统消息内容。
+        result_format (str): 结果的期望格式。
+        error (Exception): 捕获到的异常对象。
+    """
     error_data = {
         "Error ID": unique_id,
         "Prompt": prompt,
@@ -27,12 +38,23 @@ def log_error_as_json(unique_id, prompt, system_message, result_format, error):
         "Error": str(error)
     }
     # 将错误信息保存为 JSON 格式
-    with open('error_log.json', 'a') as f:
+    with open('error_log.json', 'a', encoding='utf-8') as f:
         json.dump(error_data, f, ensure_ascii=False)
         f.write('\n')  # 确保每条日志占一行
 
 
 def log_detailed_error(unique_id, prompt, system_message, result_format, error, retries):
+    """
+    保存更详细的错误日志，包括重试次数等额外信息。
+
+    参数:
+        unique_id (str): 错误的唯一ID。
+        prompt (str): 提示词的内容。
+        system_message (str): 系统消息内容。
+        result_format (str): 结果的期望格式。
+        error (Exception): 捕获到的异常对象。
+        retries (int): 当前错误发生时的重试次数。
+    """
     error_data = {
         "Error ID": unique_id,
         "Prompt": prompt,
@@ -41,7 +63,7 @@ def log_detailed_error(unique_id, prompt, system_message, result_format, error, 
         "Error": str(error),
         "Retries": retries
     }
-    with open('detailed_error_log.json', 'a') as f:
+    with open('detailed_error_log.json', 'a', encoding='utf-8') as f:
         json.dump(error_data, f, ensure_ascii=False, indent=4)
         f.write('\n')  # 分隔不同的错误日志
 
@@ -50,6 +72,19 @@ def log_detailed_error(unique_id, prompt, system_message, result_format, error, 
 async def get_completion(prompt: str, system_message: str = "You are a helpful assistant.",
                          model: str = "qwen2-72b-instruct", result_format: str = 'message',
                          max_retries: int = 5) -> Union[str, dict]:
+    """
+    与大型语言模型进行交互以获取处理结果。包括处理错误、重试机制等。
+
+    参数:
+        prompt (str): 发送给语言模型的提示词。
+        system_message (str): 系统消息，用于定义模型的角色。
+        model (str): 使用的模型名称，默认为 "qwen2-72b-instruct"。
+        result_format (str): 期望的返回结果格式，默认为 'message'。
+        max_retries (int): 最大重试次数，默认为 5。
+
+    返回值:
+        Union[str, dict]: 返回的结果，可能是字符串或字典格式。
+    """
     loop = asyncio.get_running_loop()  # 获取当前运行的事件循环
     retries = 0  # 初始化重试次数
     unique_id = None  # 预先定义 unique_id 变量
@@ -61,7 +96,7 @@ async def get_completion(prompt: str, system_message: str = "You are a helpful a
                                                                         result_format=result_format))
 
             if result is None:
-                raise ValueError("client_qwen returned None")  # 如果结果为空，则抛出异常
+                raise ValueError("client_qwen 返回 None")  # 如果结果为空，则抛出异常
 
             response, token_count = result  # 解包结果
 
@@ -70,21 +105,25 @@ async def get_completion(prompt: str, system_message: str = "You are a helpful a
                 try:
                     response = json.loads(response)  # 尝试将字符串解析为 JSON
                 except json.JSONDecodeError:
+                    print(f"解析失败的结果为：{type(response)}\n{response}")
+                    print(f"解析失败: {traceback.format_exc()}")
                     pass  # 如果解析失败，保持 response 为字符串
 
-            if isinstance(response, dict) and 'translate' in response:
+            if isinstance(response, dict) and 'translate' in response and result_format == 'message':
                 # 如果 response 是一个字典并包含 'translate' 字段
                 return response['translate']
             elif result_format == 'txt':
                 # 如果 result_format 是 'txt'，直接返回 response
                 return response
             else:
-                raise ValueError("Unexpected response format.")
+                print(f"LLM 格式解析错误：{traceback.format_exc()}")
+                return response
 
         except Exception as e:
             unique_id = str(uuid.uuid4())  # 生成唯一的错误ID
             log_error_as_json(unique_id, prompt, system_message, result_format, e)  # 保存为 JSON 日志
             logging.error(f"Error ID: {unique_id} - Error: {str(e)}")  # 同时保存为 TXT 日志
+            print(traceback.format_exc())
             retries += 1  # 增加重试次数
             await asyncio.sleep(5)  # 等待 5 秒后重试
 
@@ -103,6 +142,7 @@ async def one_chunk_translation(source_lang: str, target_lang: str, country: str
         source_lang (str): 源语言的代码。
         target_lang (str): 目标语言的代码。
         source_text (str): 要翻译的文本块。
+        country (str): 国家信息，用于翻译的风格匹配。
 
     返回值:
         str: 翻译后的文本块。
@@ -115,7 +155,7 @@ async def one_chunk_translation(source_lang: str, target_lang: str, country: str
 以下文本是Markdown格式的文档内容，请将其从 {source_lang} 翻译为 {target_lang}：
 
 注意：
-1. 请严格保留原文的Markdown结构，确保所有的占位符（<PH></PH>）及其包裹的内容不被翻译或修改。
+1. 请严格保留原文的Markdown结构，确保所有的占位符（<PH></PH>）及其包裹的内容不被翻译或修改。对于图片描述，请确保其与图片链接分开处理。
 2. 已经用<PH></PH>标记的部分，包括HTML标签、YAML头部、注释、代码块、表格、公式、行内代码、图片和网址等元素，请勿修改这些部分的内容或格式。
 3. 遇到作者姓名和参考文献时，请保持原文，不进行翻译。
 4. 专有名词保留：原文中的专有名词（如人名、地名、品牌名等）应保持不变，避免误译。
@@ -152,8 +192,8 @@ async def one_chunk_improve_translation(
     参数:
         source_lang (str): 源语言的代码。
         target_lang (str): 目标语言的代码。
-        original_text (str): 原始字幕文本。
-        translated_text (str): 翻译后的字幕文本。
+        original_text (str): 原始文本块。
+        translated_text (str): 翻译后的文本块。
         country (str): 翻译相关的国家信息。
 
     返回值:
@@ -167,7 +207,7 @@ async def one_chunk_improve_translation(
 这是一个针对Markdown格式文档内容的翻译质量改进请求，翻译方向是从 {source_lang} 到 {target_lang}。请根据以下标准对提供的译文进行分析、批评，并基于这些批评和建议改进翻译：
 
 注意：
-1. 请严格保留原文的Markdown结构，确保所有的占位符（<PH></PH>）及其包裹的内容不被翻译或修改。
+1. 请严格保留原文的Markdown结构，确保所有的占位符（<PH></PH>）及其包裹的内容不被翻译或修改。对于图片描述，请确保其与图片链接分开处理。
 2. 已经用<PH></PH>标记的部分，包括HTML标签、YAML头部、注释、代码块、表格、公式、行内代码、图片和网址等元素，请勿修改这些部分的内容或格式。
 3. 遇到作者姓名和参考文献时，请保持原文，不进行翻译。
 4. 专有名词保留：原文中的专有名词（如人名、地名、品牌名等）应保持不变，不要翻译。
@@ -211,6 +251,16 @@ async def one_chunk_improve_translation(
 
 # 计算输入字符串中的标记数量
 def num_tokens_in_string(input_str: str, encoding_name: str = "cl100k_base") -> int:
+    """
+    计算给定字符串中的标记数量。
+
+    参数:
+        input_str (str): 输入字符串。
+        encoding_name (str): 使用的编码名称，默认为 "cl100k_base"。
+
+    返回值:
+        int: 字符串中的标记数量。
+    """
     encoding = tiktoken.get_encoding(encoding_name)  # 获取指定编码
     num_tokens = len(encoding.encode(input_str))  # 编码输入字符串并计算标记数量
     return num_tokens  # 返回标记数量
@@ -218,6 +268,16 @@ def num_tokens_in_string(input_str: str, encoding_name: str = "cl100k_base") -> 
 
 # 计算分块大小，确保文本块不超过指定的标记限制
 def calculate_chunk_size(token_count: int, token_limit: int) -> int:
+    """
+    根据给定的标记总数和限制，计算合适的分块大小。
+
+    参数:
+        token_count (int): 文本的标记总数。
+        token_limit (int): 每个块的最大标记数量。
+
+    返回值:
+        int: 计算出的块大小。
+    """
     if token_count <= token_limit:
         return token_count  # 如果标记数量小于等于限制，返回原始标记数量
 
@@ -234,6 +294,17 @@ def calculate_chunk_size(token_count: int, token_limit: int) -> int:
 # 根据最大标记数拆分文本
 # 进行优先级分割
 def split_text(text: str, max_tokens: int, token_flexibility: float = 0.5) -> List[str]:
+    """
+    根据最大标记数拆分文本，支持按标题、段落和句子结束符优先级分割。
+
+    参数:
+        text (str): 要拆分的文本。
+        max_tokens (int): 每个块的最大标记数。
+        token_flexibility (float): 标记数的灵活性范围，默认为 0.5。
+
+    返回值:
+        List[str]: 拆分后的文本块列表。
+    """
     min_tokens = max_tokens * (1 - token_flexibility)
     max_tokens_flex = max_tokens * (1 + token_flexibility)
 
@@ -248,6 +319,16 @@ def split_text(text: str, max_tokens: int, token_flexibility: float = 0.5) -> Li
     current_chunk = ""
 
     def try_split(pattern, chunk):
+        """
+        尝试按照给定的模式分割文本块。
+
+        参数:
+            pattern (Pattern): 正则表达式模式。
+            chunk (str): 当前要分割的文本块。
+
+        返回值:
+            str: 分割后剩余的未处理文本。
+        """
         parts = re.split(pattern, chunk)
         new_chunk = ""
         for part in parts:
@@ -281,11 +362,20 @@ def split_text(text: str, max_tokens: int, token_flexibility: float = 0.5) -> Li
 
 # 在信号量的控制下运行异步任务
 async def run_with_semaphore(semaphore, coro):
+    """
+    在信号量的控制下运行异步任务，以限制并发数。
+
+    参数:
+        semaphore (Semaphore): 用于限制并发的信号量对象。
+        coro (Coroutine): 要执行的协程。
+
+    返回值:
+        Any: 协程的返回结果。
+    """
     async with semaphore:
         return await coro  # 在信号量限制内运行协程
 
 
-# 定义一个异步函数，用于翻译Markdown文本
 # 定义一个异步函数，用于翻译Markdown文本
 async def translate_markdown(
         source_lang: str,
@@ -295,13 +385,38 @@ async def translate_markdown(
         max_tokens: int = TOKENS_PER_CHUNK,
         semaphore_limit: int = 5
 ) -> str:
+    """
+    使用大型语言模型将Markdown格式的文本进行分块翻译和优化。
+
+    参数:
+        source_lang (str): 源语言的代码。
+        target_lang (str): 目标语言的代码。
+        country (str): 翻译相关的国家信息。
+        source_text (str): 要翻译的Markdown格式文本。
+        max_tokens (int): 每个块的最大标记数量，默认为 800。
+        semaphore_limit (int): 最大并发任务数，默认为 5。
+
+    返回值:
+        str: 翻译后的Markdown格式文本。
+    """
     semaphore = Semaphore(semaphore_limit)  # 创建一个信号量，用于限制并发任务的数量
     num_tokens_in_text = num_tokens_in_string(source_text)  # 计算文本中的标记数量
-    ic(num_tokens_in_text)
+    ic("文本的 token 数:", num_tokens_in_text)
 
     failed_chunks = []
 
     async def process_chunk(chunk, index, retries=0) -> str:
+        """
+        处理单个文本块，包括翻译和改进。支持错误处理和重试机制。
+
+        参数:
+            chunk (str): 要处理的文本块。
+            index (int): 文本块的索引位置。
+            retries (int): 当前处理时的重试次数，默认为 0。
+
+        返回值:
+            str: 处理后的文本块结果。
+        """
         try:
             initial_translation = await run_with_semaphore(
                 semaphore, one_chunk_translation(source_lang, target_lang, country, chunk)
@@ -312,6 +427,7 @@ async def translate_markdown(
             )
             return improved_translation
         except Exception as e:
+            print(traceback.format_exc())
             if retries >= 5:
                 unique_id = str(uuid.uuid4())
                 log_detailed_error(unique_id, chunk, "", "", e, retries)
@@ -321,17 +437,18 @@ async def translate_markdown(
                 return await process_chunk(chunk, index, retries + 1)
 
     if num_tokens_in_text < max_tokens:
-        ic("Translating text as single chunk")
+        ic("文本将在单个块中翻译")
         return await process_chunk(source_text, 0)
     else:
-        ic("Translating text as multiple chunks")
+        ic("文本将被分割并翻译")
         source_text_chunks = split_text(source_text, max_tokens)
+        ic("文本被分割成的块数：", len(source_text_chunks))
         translated_chunks: List[str] = list(
             await asyncio.gather(*[process_chunk(chunk, index) for index, chunk in enumerate(source_text_chunks)]))
 
         # 如果有失败的块，再次尝试处理
         if failed_chunks:
-            ic("Retrying failed chunks")
+            ic("重试失败的块")
             retry_results = await asyncio.gather(*[process_chunk(chunk, index) for index, chunk in failed_chunks])
 
             for (index, _), retry_result in zip(failed_chunks, retry_results):
