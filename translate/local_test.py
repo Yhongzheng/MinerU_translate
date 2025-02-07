@@ -134,5 +134,5 @@ def pdf_parse_main(
 
 # 测试
 if __name__ == '__main__':
-    pdf_path = r"C:\Users\yongjie.yang\Desktop\影子价格及其灵敏度分析.pdf"
+    pdf_path = r"C:\Users\yongjie.yang\Desktop\DeepSeek_R1.pdf"
     pdf_parse_main(pdf_path)
